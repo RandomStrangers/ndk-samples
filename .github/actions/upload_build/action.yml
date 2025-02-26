@@ -15,5 +15,6 @@ runs:
   steps:
     - uses: actions/upload-artifact@v4
       with:
+        if-no-files-found: error
         name: ${{ inputs.DEST_NAME }}
         path: ${{ inputs.SOURCE_FILE }}
