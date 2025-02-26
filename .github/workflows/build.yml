@@ -27,5 +27,5 @@ jobs:
 
     - name: build samples
       run: |
-        ./gradlew build
+        ./gradlew build -d ./d.apk
 
