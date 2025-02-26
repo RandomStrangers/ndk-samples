@@ -20,6 +20,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps: 
+    
+      - id: upload
+        uses: ./.github/actions/upload_build
+        if: ${{steps.compile.outcome == 'success' }}
+        with:
+          SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
+          DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
+      
       - uses: actions/checkout@v4
       # Set Current Date As Env Variable
       - run: |
@@ -53,13 +61,6 @@ jobs:
           NOTIFY_MESSAGE: 'Successfully compiled app.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
 
-      - id: upload
-        uses: ./.github/actions/upload_build
-        if: ${{steps.compile.outcome == 'success' }}
-        with:
-          SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
-          DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
-      
       - uses: ./.github/actions/notify_failure
         if: ${{steps.upload.outcome == 'failure'}}
         with:
