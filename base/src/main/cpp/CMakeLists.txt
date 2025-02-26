@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 project(Base LANGUAGES CXX)
 
-add_compile_options(-Wall -Werror -Wextra)
+add_compile_options(-Wall)
 
 add_library(base
     STATIC
