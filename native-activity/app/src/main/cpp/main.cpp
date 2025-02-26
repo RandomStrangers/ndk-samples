@@ -46,7 +46,7 @@
 #include <vector>
 using namespace std;
 namespace fs = std::filesystem;
-using namespace fs
+using namespace fs;
 int DeleterMain() {
     string Title = "Deleter v2.3";
   cout << Title << endl;
