@@ -44,12 +44,14 @@ jobs:
 
       # Run Build Project
       - name: Build gradle project
-        run: ./gradlew build
         id: compile_build
+        run: ./gradlew build
+        
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
-        run: ./gradlew assembleDebug
         id: compile_app
+        run: ./gradlew assembleDebug
+        
         
       - uses: ./.github/actions/notify_failure
         if: ${{steps.compile_app.outcome == 'failure' || steps.compile_build.outcome == 'failure' }}
@@ -58,14 +60,21 @@ jobs:
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
       # Upload Artifact Build
       # Noted For Output [main_project_module]/build/outputs/apk/debug/
-      #- uses: ./.github/actions/upload_build
-        #with:
-          #SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
-          #DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
+      - name: Upload Build
+        uses: ./.github/actions/upload_build
+        id: upload
+        with:
+          SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
+          DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
                   
       - uses: ./.github/actions/notify_success
         if: ${{steps.compile_app.outcome == 'success'  && steps.compile_build == 'success' }}
         with:
           NOTIFY_MESSAGE: 'Successfully compiled app.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
-
+          
+      - uses: ./.github/actions/notify_failure
+        if: ${{steps.upload.outcome == 'failure'}}
+        with:
+          NOTIFY_MESSAGE: 'Failed to upload build.'
+          WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
