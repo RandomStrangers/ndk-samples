@@ -54,6 +54,6 @@ jobs:
       - name: Upload APK Debug - ${{ env.repository_name }}
         uses: ./.github/actions/upload_build
         with:
-          SOURCE_FILE: ${{ env.repository_name }}/${{ env.repository_name }}/${{ env.main_project_name }}${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
-          DEST_FILE: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
+          SOURCE_FILE: ${{ env.repository_name }}/${{ env.repository_name }}/${{ env.main_project_name }}/${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
+          DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
 
