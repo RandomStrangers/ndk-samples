@@ -49,19 +49,20 @@ jobs:
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
         run: ./gradlew assembleDebug
-        
-      - uses: ./.github/actions/notify_failure
-        if: ${{ always() && steps.compile.outcome == 'failure' }}
-        with:
-          NOTIFY_MESSAGE: 'Failed to compile app! <@999409543001931788>'
-          WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
+
       # Upload Artifact Build
       # Noted For Output [main_project_module]/build/outputs/apk/debug/
       - name: Upload APK Debug - ${{ env.repository_name }}
         uses: ./.github/actions/upload_build
         with:
-          SOURCE_FILE: /home/runner/work/${{ env.repository_name }}/${{ env.repository_name }}/${{ env.main_project_name }}/${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
+          SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
           DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
+                  
+      - uses: ./.github/actions/notify_failure
+        if: ${{ always() && steps.compile.outcome == 'failure' }}
+        with:
+          NOTIFY_MESSAGE: 'Failed to compile app! <@999409543001931788>'
+          WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
           
       - uses: ./.github/actions/notify_success
         if: ${{ always() && steps.compile.outcome == 'success' }}
