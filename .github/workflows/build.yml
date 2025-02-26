@@ -3,7 +3,7 @@ name: Generated APK AAB (Upload - Create Artifact To Github Action)
 env:
   # The name of the main module repository
   main_project_module: app
-
+  main_project_name: native-activity
   # The name of the Play Store
   playstore_name: Frogobox ID
 
@@ -55,5 +55,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
-          path: ${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
+          path: ${{ env.main_project_name }}/${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
 
