@@ -61,5 +61,5 @@ jobs:
       - uses: ./.github/actions/notify_failure
         if: ${{ always() && steps.compile.outcome == 'failure' }}
         with:
-          NOTIFY_MESSAGE: 'Failed to compile':${{ env.repository_name }}: 'build <@999409543001931788>'
+          NOTIFY_MESSAGE: 'Failed to compile app! <@999409543001931788>'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
