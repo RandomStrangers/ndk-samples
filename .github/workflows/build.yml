@@ -44,17 +44,16 @@ jobs:
 
       # Run Build Project
       - name: Build gradle project
-        id: compile_build
         run: ./gradlew build
         
       # Create APK Debug
       - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
-        id: compile_app
+        id: compile
         run: ./gradlew assembleDebug
         
-        
-      - uses: ./.github/actions/notify_failure
-        if: ${{steps.compile_app.outcome == 'failure' || steps.compile_build.outcome == 'failure' }}
+      - name: Notify of failure
+        uses: ./.github/actions/notify_failure
+        if: ${{steps.compile.outcome == 'failure'}}
         with:
           NOTIFY_MESSAGE: 'Failed to compile app! <@999409543001931788>'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
@@ -66,14 +65,14 @@ jobs:
         with:
           SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
           DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
-                  
-      - uses: ./.github/actions/notify_success
-        if: ${{steps.compile_app.outcome == 'success'}}
+      - name: Notify of success           
+        uses: ./.github/actions/notify_success
+        if: ${{steps.compile.outcome == 'success'}}
         with:
           NOTIFY_MESSAGE: 'Successfully compiled app.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
-          
-      - uses: ./.github/actions/notify_failure
+      - name: Notify of upload failure 
+        uses: ./.github/actions/notify_failure
         if: ${{steps.upload.outcome == 'failure'}}
         with:
           NOTIFY_MESSAGE: 'Failed to upload build.'
