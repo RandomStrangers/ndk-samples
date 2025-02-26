@@ -54,6 +54,11 @@ jobs:
       - name: Upload APK Debug - ${{ env.repository_name }}
         uses: ./.github/actions/upload_build
         with:
-          SOURCE_FILE: ${{ env.repository_name }}/${{ env.repository_name }}/${{ env.main_project_name }}/${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
+          SOURCE_FILE: /home/runner/${{ env.repository_name }}/${{ env.repository_name }}/${{ env.main_project_name }}/${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
           DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
 
+      - uses: ./.github/actions/notify_failure
+        if: ${{ always() && steps.compile.outcome == 'failure' }}
+        with:
+          NOTIFY_MESSAGE: 'Failed to compile':${{ env.repository_name }}: 'build <@999409543001931788>'
+          WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
