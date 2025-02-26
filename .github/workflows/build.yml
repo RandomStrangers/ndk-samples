@@ -68,7 +68,7 @@ jobs:
           DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
                   
       - uses: ./.github/actions/notify_success
-        if: ${{steps.compile_app.outcome == 'success'  && steps.compile_build == 'success' }}
+        if: ${{steps.compile_app.outcome == 'success'}}
         with:
           NOTIFY_MESSAGE: 'Successfully compiled app.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
