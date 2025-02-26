@@ -52,17 +52,3 @@ jobs:
         with:
           NOTIFY_MESSAGE: 'Successfully compiled app.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
-
-      - uses: ./.github/actions/notify_failure
-        if: ${{steps.upload.outcome == 'failure'}}
-        with:
-          NOTIFY_MESSAGE: 'Failed to upload app.'
-          WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
-      - uses: ./.github/actions/upload_build
-        id: upload
-        with:
-          SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
-          DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
-  
-      
-      
