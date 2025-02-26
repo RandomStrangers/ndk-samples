@@ -3,12 +3,12 @@ description: Sends a notification that a workflow has finished.
 inputs:
   BOT_USERNAME:
     description: 'Username to use for the discord bot message'
-    default: 'Harmony Client BuildBot'
+    default: 'GitHub BuildBot'
     required: false
     type: string
   BOT_AVATAR:
     description: 'URL to use for the avatar of the discord bot message'
-    default: 'https://raw.githubusercontent.com/RandomStrangers/HarmonyClient/master/misc/Icon.png'
+    default: 'https://cdn.discordapp.com/avatars/1257716528283910155/df91181b3f1cf0ef1592fbe18e0962d7.webp'
     required: false
     type: string
   NOTIFY_MESSAGE:
