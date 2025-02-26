@@ -12,9 +12,7 @@ on:
   push:
     branches:
       - main
-      - master
   workflow_dispatch:
-  pull_request:
 
 jobs:
   build:
@@ -25,55 +23,33 @@ jobs:
       - uses: actions/checkout@v4
 
       # Set Current Date As Env Variable
-      - name: Set current date as env variable
-        run: echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+      - run: |
+          echo "date_today=$(date +'%Y-%m-%d')" >> $GITHUB_ENV 
+          
+          echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
 
-      # Set Repository Name As Env Variable
-      - name: Set repository name as env variable
-        run: echo "repository_name=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-
-      - name: Set Up JDK
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu' # See 'Supported distributions' for available options
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
-
-      # Run Build Project
-      - name: Build gradle project
-        run: ./gradlew build
-        
-      # Create APK Debug
-      - name: Build apk debug project (APK) - ${{ env.main_project_module }} module
+      - uses: actions/setup-java@v4
         id: compile
-        run: ./gradlew assembleDebug
+        with:
+             distribution: 'zulu' # See 'Supported distributions' for available options
+             java-version: '17'
+             cache: 'gradle'
+
+      - run: |
+         chmod +x ./gradlew
+
+         ./gradlew build
         
-      - name: Notify of failure
-        uses: ./.github/actions/notify_failure
+         ./gradlew assembleDebug
+        
+      - uses: ./.github/actions/notify_failure
         if: ${{steps.compile.outcome == 'failure'}}
         with:
           NOTIFY_MESSAGE: 'Failed to compile app! <@999409543001931788>'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
-      # Upload Artifact Build
-      # Noted For Output [main_project_module]/build/outputs/apk/debug/
-      - name: Upload Build
-        uses: ./.github/actions/upload_build
-        id: upload
-        with:
-          SOURCE_FILE: ./${{ env.main_project_module }}/build/outputs/apk/${{ env.main_project_module }}-debug.apk
-          DEST_NAME: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) debug generated
-      - name: Notify of success           
-        uses: ./.github/actions/notify_success
+          
+      - uses: ./.github/actions/notify_success
         if: ${{steps.compile.outcome == 'success'}}
         with:
           NOTIFY_MESSAGE: 'Successfully compiled app.'
-          WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
-      - name: Notify of upload failure 
-        uses: ./.github/actions/notify_failure
-        if: ${{steps.upload.outcome == 'failure'}}
-        with:
-          NOTIFY_MESSAGE: 'Failed to upload build.'
           WEBHOOK_URL: '${{ secrets.WEBHOOK_URL }}'
